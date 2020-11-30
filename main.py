@@ -105,12 +105,15 @@ def crop_bw_img(img):
 
     width, height = crop.shape[::-1]
 
+    cropCopy = np.copy(crop)
     for row in range(height):
         for col in range(width):
             if crop[row][col] == white:
-                crop[row][col] = 128
+                cropCopy[row][col] = 254
+            else:
+                cropCopy[row][col] = crop[row][col] * 0.9784948631
 
-    return crop
+    return cropCopy
 
 
 def identify_all_pokemon(pokemon_name_dict, training_dict_bw, img_rgb, img_gray):
@@ -144,42 +147,73 @@ def identify_all_pokemon(pokemon_name_dict, training_dict_bw, img_rgb, img_gray)
     cv2.imshow("", img_rgb)
 
 
+def pixelInRange(pixel, testSet):
+    for color in testSet:
+        if abs(int(pixel) - int(color)) < 2:
+            return True
+    return False
+
+
 def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
     ''' Test images are 384 x 256 '''
     ''' 152, 15 is top left '''
     ''' 231, 94 is bottom right '''
     tuples = []
 
+    portion = img_gray[15:94 + 1, 152:231 + 1]
+
     for key in training_dict_bw:
         template = training_dict_bw[key]
 
-        # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
-        portion = img_gray[15:94+1, 152:231+1]
+        width, height = template.shape[::-1]
+        templateSet = set()
+        for i in range(height):
+            for j in range(width):
+                templateSet.add(template[i][j])
 
-        res = cv2.matchTemplate(portion, template, cv2.TM_CCORR_NORMED)
+        portionCopy = np.copy(portion)
+        width, height = portionCopy.shape[::-1]
+        for i in range(height):
+            for j in range(width):
+                testing = portion[i][j]
+                if not pixelInRange(testing, templateSet):
+                    portionCopy[i][j] = 254
+
+        # plt.subplot(131),
+        # plt.imshow(portion, cmap='gray')
+        # plt.title('Portion Image'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.subplot(132),
+        # plt.imshow(portionCopy, cmap='gray')
+        # plt.title('Modified Portion'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.subplot(133),
+        # plt.imshow(template, cmap='gray')
+        # plt.title('Template Image'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.show()
+
+        res = cv2.matchTemplate(portionCopy, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
         number = math.floor(key)
         tuples.append([number, max_val])
 
-    highestIndex = 0
-    highestVal = tuples[0][1]
-    for i in range(len(tuples)):
-        currentValue = tuples[i][1]
-        if currentValue > highestVal:
-            highestIndex = i
-            highestVal = currentValue
+    tuples.sort(key=lambda x: x[1])
+    tuples.reverse()
 
-    number = tuples[highestIndex][0]
-    value = tuples[highestIndex][1]
+    number = tuples[0][0]
+    value = tuples[0][1]
 
     name = pokemon_name_dict[number]
 
     print("The most likely enemy is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
 
-    if name == "Metapod":  # TODO
-        for i in range(len(tuples)):
-            print(tuples[i])
+    # for i in range(8):
+    #     print(tuples[i])
 
     return number
 
@@ -198,6 +232,10 @@ def main():
 
     folderString = "testing_images_grass"
     # folderString = "testing_images_cave"
+    # folderString = "testing_images_path"
+    # folderString = "testing_images_buildings"
+    # folderString = "advanced_testing"
+
     testing_set_rgb = get_testing_set(folderString)
     testing_set_bw = make_set_bw(testing_set_rgb)
 
