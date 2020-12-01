@@ -90,9 +90,15 @@ def cropImgGray(img, key):
     white = 255
     black = 0
 
+    targetColor = img[0][0]
+    if targetColor != white and targetColor != black:
+        targetColor = white
+        print("We may have a problem in cropping this image")
+        print(key)
+
     for row in range(height):
         for col in range(width):
-            if img[row][col] != white:
+            if img[row][col] != targetColor:
                 if row < topIndex:
                     topIndex = row
                 if row > bottomIndex:
@@ -106,12 +112,6 @@ def cropImgGray(img, key):
 
     width, height = crop.shape[::-1]
 
-    targetColor = img[0][0]
-    if targetColor != white and targetColor != black:
-        targetColor = white
-        print("We may have a problem in cropping this image")
-        print(key)
-
     cropCopy = np.copy(crop)
     for row in range(height):
         for col in range(width):
@@ -123,35 +123,35 @@ def cropImgGray(img, key):
     return cropCopy
 
 
-def identifyAllPokemon(pokemonNameDict, trainingDict, imgRGB, imgGray):
-    font = cv2.FONT_HERSHEY_PLAIN
-    fontScale = 1
-    color = (255, 255, 255)
-    thickness = 1
-
-    for key in trainingDict:
-        template = trainingDict[key]
-
-        w, h = template.shape[::-1]
-
-        # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
-        portion = imgGray[0:192+1, 0:256+1]
-
-        res = cv2.matchTemplate(portion, template, cv2.TM_CCORR_NORMED)
-
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
-        ''' When Black - 0.78 is where Chikorita false positive disappears; Weedle isn't found after 0.75 '''
-        ''' When white - 0.95 gets most light pokemon'''
-        if max_val > 0.96:  # TODO
-            top_left = max_loc
-            bottom_right = (top_left[0] + w, top_left[1] + h)
-
-            cv2.rectangle(imgRGB, top_left, bottom_right, (255, 0, 0), 1)
-            name = pokemonNameDict[math.floor(key)]
-            imgRGB = cv2.putText(imgRGB, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
-
-    cv2.imshow("", imgRGB)
+# def identifyAllPokemon(pokemonNameDict, trainingDict, imgRGB, imgGray):
+#     font = cv2.FONT_HERSHEY_PLAIN
+#     fontScale = 1
+#     color = (255, 255, 255)
+#     thickness = 1
+#
+#     for key in trainingDict:
+#         template = trainingDict[key]
+#
+#         w, h = template.shape[::-1]
+#
+#         # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
+#         portion = imgGray[0:192+1, 0:256+1]
+#
+#         res = cv2.matchTemplate(portion, template, cv2.TM_CCOEFF_NORMED)
+#
+#         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+#
+#         ''' When Black - 0.78 is where Chikorita false positive disappears; Weedle isn't found after 0.75 '''
+#         ''' When white - 0.95 gets most light pokemon'''
+#         if max_val > 0.96:  # TODO
+#             top_left = max_loc
+#             bottom_right = (top_left[0] + w, top_left[1] + h)
+#
+#             cv2.rectangle(imgRGB, top_left, bottom_right, (255, 0, 0), 1)
+#             name = pokemonNameDict[math.floor(key)]
+#             imgRGB = cv2.putText(imgRGB, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
+#
+#     cv2.imshow("", imgRGB)
 
 
 def pixelInRange(pixel, testSet):
@@ -159,6 +159,24 @@ def pixelInRange(pixel, testSet):
         if abs(int(pixel) - int(color)) < 2:
             return True
     return False
+
+
+def getImgWithTemplateColors(template, portion):
+    width, height = template.shape[::-1]
+    templateSet = set()
+    for i in range(height):
+        for j in range(width):
+            templateSet.add(template[i][j])
+
+    portionCopy = np.copy(portion)
+    width, height = portionCopy.shape[::-1]
+    for i in range(height):
+        for j in range(width):
+            testing = portion[i][j]
+            if not pixelInRange(testing, templateSet):
+                portionCopy[i][j] = 254
+
+    return portionCopy
 
 
 def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
@@ -171,19 +189,7 @@ def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
     for key in trainingDict:
         template = trainingDict[key]
 
-        width, height = template.shape[::-1]
-        templateSet = set()
-        for i in range(height):
-            for j in range(width):
-                templateSet.add(template[i][j])
-
-        portionCopy = np.copy(portion)
-        width, height = portionCopy.shape[::-1]
-        for i in range(height):
-            for j in range(width):
-                testing = portion[i][j]
-                if not pixelInRange(testing, templateSet):
-                    portionCopy[i][j] = 254
+        portionCopy = getImgWithTemplateColors(template, portion)
 
         # templateSetExpand = set()
         # for item in templateSet:
@@ -235,27 +241,15 @@ def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
 
 def identifyAlly(pokemonNameDict, trainingDict, imgGray):
     ''' Test images are 384 x 256 '''
-    ''' 23, 89 is top left '''
-    ''' 102, 168 is bottom right '''
+    ''' 23, 72 is top left '''
+    ''' 102, 151 is bottom right '''
     tuples = []
 
-    portion = imgGray[89:168 + 1, 23:102 + 1]
+    portion = imgGray[72:151 + 1, 23:102 + 1]
     for key in trainingDict:
         template = trainingDict[key]
 
-        width, height = template.shape[::-1]
-        templateSet = set()
-        for i in range(height):
-            for j in range(width):
-                templateSet.add(template[i][j])
-
-        portionCopy = np.copy(portion)
-        width, height = portionCopy.shape[::-1]
-        for i in range(height):
-            for j in range(width):
-                testing = portion[i][j]
-                if not pixelInRange(testing, templateSet):
-                    portionCopy[i][j] = 254
+        portionCopy = getImgWithTemplateColors(template, portion)
 
         # templateSetExpand = set()
         # for item in templateSet:
@@ -305,11 +299,78 @@ def identifyAlly(pokemonNameDict, trainingDict, imgGray):
     return number
 
 
-# def is_shiny_enemy(enemyNumber, imgRGB, imgGray):
-#     ''' Test images are 384 x 256 '''
-#     ''' 152, 15 is top left '''
-#     ''' 231, 94 is bottom right '''
-#     return False
+def isShinyEnemy(enemyNumber):
+    decimal = enemyNumber - int(enemyNumber)
+    if 0.49 < decimal < 0.511:
+        return True
+    return False
+
+
+def identifyAllPokemon(pokemonNameDict, imgRGB, imgGray, trainingDictAlly, allyNumber, trainingDictEnemy, enemyNumber):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    fontScale = 0.5
+    color = (0, 0, 127)
+    thickness = 1
+
+    ''' Ally '''
+    ''' 23, 72 is top left '''
+    ''' 102, 151 is bottom right '''
+    templateAlly = trainingDictAlly[allyNumber]
+
+    w, h = templateAlly.shape[::-1]
+
+    # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
+    portionAlly = imgGray[72:151 + 1, 23:102 + 1]
+    portionAllyCopy = getImgWithTemplateColors(templateAlly, portionAlly)
+
+    res = cv2.matchTemplate(portionAllyCopy, templateAlly, cv2.TM_CCOEFF_NORMED)
+
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+    top_left = max_loc
+    left = top_left[0] + 23
+    top = top_left[1] + 72
+    top_left = left, top
+    bottom_right = (left + w, top + h)
+
+    cv2.rectangle(imgRGB, top_left, bottom_right, (255, 0, 0), 1)
+    name = pokemonNameDict[math.floor(allyNumber)]
+    imgRGB = cv2.putText(imgRGB, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
+
+    ''' Enemy '''
+    ''' 152, 15 is top left '''
+    ''' 231, 94 is bottom right '''
+    templateEnemy = trainingDictEnemy[enemyNumber]
+
+    w, h = templateEnemy.shape[::-1]
+
+    # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
+    portionEnemy = imgGray[15:94 + 1, 152:231 + 1]
+    portionEnemyCopy = getImgWithTemplateColors(templateEnemy, portionEnemy)
+
+    res = cv2.matchTemplate(portionEnemyCopy, templateEnemy, cv2.TM_CCOEFF_NORMED)
+
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+    top_left = max_loc
+    left = top_left[0] + 152
+    top = top_left[1] + 15
+    top_left = left, top
+    bottom_right = (left + w, top + h)
+
+    cv2.rectangle(imgRGB, top_left, bottom_right, (255, 0, 0), 1)
+    name = pokemonNameDict[math.floor(enemyNumber)]
+    imgRGB = cv2.putText(imgRGB, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
+
+    # Draw Rectangles around Search Areas
+    # top_left = 23, 72
+    # bottom_right = 102, 151
+    # cv2.rectangle(imgRGB, top_left, bottom_right, (0, 255, 0), 1)
+    # top_left = 152, 15
+    # bottom_right = 231, 94
+    # cv2.rectangle(imgRGB, top_left, bottom_right, (0, 255, 0), 1)
+
+    cv2.imshow("", imgRGB)
 
 
 def main():
@@ -337,8 +398,6 @@ def main():
         imgRGB = testingSetRGB[i]
         imgGray = testingListGray[i]
 
-        identifyAllPokemon(pokemonNameDict, trainingDictEnemy, imgRGB, imgGray)
-
         startTime = time.time()
         allyNumber = identifyAlly(pokemonNameDict, trainingDictAlly, imgGray)
         endTime = time.time()
@@ -349,8 +408,14 @@ def main():
         endTime = time.time()
         print(round(endTime - startTime, 5), "seconds to find enemy")
 
-        # if is_shiny_enemy(enemyNumber, imgRGB, imgGray):
-        #     print("IT'S SHINY")
+        identifyAllPokemon(pokemonNameDict, imgRGB, imgGray, trainingDictAlly, allyNumber, trainingDictEnemy, enemyNumber)
+
+        if isShinyEnemy(enemyNumber):
+            print("IT'S SHINY")
+            # while True:
+            #     print("IT'S SHINY")
+            #     time.sleep(1)
+
         cv2.waitKey()
         print()
 
