@@ -30,35 +30,6 @@ def getImgWithTemplateColors(template, portion):
     return portionCopy
 
 
-def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
-    ''' Test images are 384 x 256 '''
-    ''' 152, 15 is top left '''
-    ''' 231, 94 is bottom right '''
-    tuples = []
-
-    portion = imgGray[15:94 + 1, 152:231 + 1]
-    for key in trainingDict:
-        template = trainingDict[key]
-        portionCopy = getImgWithTemplateColors(template, portion)
-
-        res = cv2.matchTemplate(portionCopy, template, cv2.TM_CCOEFF_NORMED)
-        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
-        tuples.append([key, max_val])
-
-    tuples.sort(key=lambda x: x[1])
-    tuples.reverse()
-
-    number = tuples[0][0]
-    value = tuples[0][1]
-
-    name = pokemonNameDict[math.floor(number)]
-
-    print("The most likely enemy is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
-
-    return number
-
-
 def identifyAlly(pokemonNameDict, trainingDict, imgGray):
     ''' Test images are 384 x 256 '''
     ''' 23, 72 is top left '''
@@ -84,6 +55,35 @@ def identifyAlly(pokemonNameDict, trainingDict, imgGray):
     name = pokemonNameDict[math.floor(number)]
 
     print("The most likely ally is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
+
+    return number
+
+
+def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
+    ''' Test images are 384 x 256 '''
+    ''' 152, 15 is top left '''
+    ''' 231, 94 is bottom right '''
+    tuples = []
+
+    portion = imgGray[15:94 + 1, 152:231 + 1]
+    for key in trainingDict:
+        template = trainingDict[key]
+        portionCopy = getImgWithTemplateColors(template, portion)
+
+        res = cv2.matchTemplate(portionCopy, template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+        tuples.append([key, max_val])
+
+    tuples.sort(key=lambda x: x[1])
+    tuples.reverse()
+
+    number = tuples[0][0]
+    value = tuples[0][1]
+
+    name = pokemonNameDict[math.floor(number)]
+
+    print("The most likely enemy is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
 
     return number
 
