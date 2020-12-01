@@ -5,34 +5,35 @@ import csv
 from matplotlib import pyplot as plt
 import math
 import random
+import time
 
 
-def get_training_dict():
-    image_set = {}
-    for filename in os.listdir("training_sprites"):
-        path = "training_sprites/" + filename
+def getTrainingDict(folderString):
+    imageDict = {}
+    for filename in os.listdir(folderString):
+        path = folderString + "/" + filename
         im = cv2.imread(path, 0)
-        imc = crop_bw_img(im)
-        image_set[float(filename.strip(".png"))] = imc
-    return image_set
+        imc = cropImgGray(im, float(filename.strip(".png")))
+        imageDict[float(filename.strip(".png"))] = imc
+    return imageDict
 
 
-def get_testing_set(folderString):
-    image_set = []
+def getTestingList(folderString):
+    imageSet = []
     for filename in os.listdir(folderString):
         im = cv2.imread(os.path.join(folderString, filename))
-        image_set.append(im)
-    return image_set
+        imageSet.append(im)
+    return imageSet
 
 
-def make_set_bw(image_set):
-    bw_set = []
+def makeListGray(image_set):
+    bwSet = []
     for image in image_set:
-        bw_set.append(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
-    return bw_set
+        bwSet.append(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
+    return bwSet
 
 
-def load_dict():
+def loadDict():
     input_file = csv.reader(open("PokemonListByNumber.csv", "r"))
     dictionary = {}
     for row in input_file:
@@ -78,7 +79,7 @@ def load_dict():
 #     return crop
 
 
-def crop_bw_img(img):
+def cropImgGray(img, key):
     width, height = img.shape[::-1]
 
     topIndex = height - 1
@@ -105,10 +106,16 @@ def crop_bw_img(img):
 
     width, height = crop.shape[::-1]
 
+    targetColor = img[0][0]
+    if targetColor != white and targetColor != black:
+        targetColor = white
+        print("We may have a problem in cropping this image")
+        print(key)
+
     cropCopy = np.copy(crop)
     for row in range(height):
         for col in range(width):
-            if crop[row][col] == white:
+            if crop[row][col] == targetColor:
                 cropCopy[row][col] = 254
             else:
                 cropCopy[row][col] = crop[row][col] * 0.9784948631
@@ -116,19 +123,19 @@ def crop_bw_img(img):
     return cropCopy
 
 
-def identify_all_pokemon(pokemon_name_dict, training_dict_bw, img_rgb, img_gray):
+def identifyAllPokemon(pokemonNameDict, trainingDict, imgRGB, imgGray):
     font = cv2.FONT_HERSHEY_PLAIN
     fontScale = 1
     color = (255, 255, 255)
     thickness = 1
 
-    for key in training_dict_bw:
-        template = training_dict_bw[key]
+    for key in trainingDict:
+        template = trainingDict[key]
 
         w, h = template.shape[::-1]
 
         # crop = img[topIndex:bottomIndex + 1, leftIndex:rightIndex + 1]
-        portion = img_gray[0:192+1, 0:256+1]
+        portion = imgGray[0:192+1, 0:256+1]
 
         res = cv2.matchTemplate(portion, template, cv2.TM_CCORR_NORMED)
 
@@ -140,11 +147,11 @@ def identify_all_pokemon(pokemon_name_dict, training_dict_bw, img_rgb, img_gray)
             top_left = max_loc
             bottom_right = (top_left[0] + w, top_left[1] + h)
 
-            cv2.rectangle(img_rgb, top_left, bottom_right, (255, 0, 0), 1)
-            name = pokemon_name_dict[math.floor(key)]
-            img_rgb = cv2.putText(img_rgb, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
+            cv2.rectangle(imgRGB, top_left, bottom_right, (255, 0, 0), 1)
+            name = pokemonNameDict[math.floor(key)]
+            imgRGB = cv2.putText(imgRGB, name, top_left, font, fontScale, color, thickness, cv2.LINE_AA)
 
-    cv2.imshow("", img_rgb)
+    cv2.imshow("", imgRGB)
 
 
 def pixelInRange(pixel, testSet):
@@ -154,16 +161,15 @@ def pixelInRange(pixel, testSet):
     return False
 
 
-def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
+def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
     ''' Test images are 384 x 256 '''
     ''' 152, 15 is top left '''
     ''' 231, 94 is bottom right '''
     tuples = []
 
-    portion = img_gray[15:94 + 1, 152:231 + 1]
-
-    for key in training_dict_bw:
-        template = training_dict_bw[key]
+    portion = imgGray[15:94 + 1, 152:231 + 1]
+    for key in trainingDict:
+        template = trainingDict[key]
 
         width, height = template.shape[::-1]
         templateSet = set()
@@ -178,6 +184,15 @@ def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
                 testing = portion[i][j]
                 if not pixelInRange(testing, templateSet):
                     portionCopy[i][j] = 254
+
+        # templateSetExpand = set()
+        # for item in templateSet:
+        #     templateSetExpand.add(item)
+        #     templateSetExpand.add(item + 1)
+        #     templateSetExpand.add(item - 1)
+        #     templateSetExpand.add(item + 2)
+        #     templateSetExpand.add(item - 2)
+        # portionCopy[not portionCopy in templateSetExpand] = 254
 
         # plt.subplot(131),
         # plt.imshow(portion, cmap='gray')
@@ -199,8 +214,8 @@ def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
         res = cv2.matchTemplate(portionCopy, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-        number = math.floor(key)
-        tuples.append([number, max_val])
+        # number = math.floor(key)
+        tuples.append([key, max_val])
 
     tuples.sort(key=lambda x: x[1])
     tuples.reverse()
@@ -208,7 +223,7 @@ def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
     number = tuples[0][0]
     value = tuples[0][1]
 
-    name = pokemon_name_dict[number]
+    name = pokemonNameDict[math.floor(number)]
 
     print("The most likely enemy is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
 
@@ -218,36 +233,126 @@ def identify_enemy(pokemon_name_dict, training_dict_bw, img_gray):
     return number
 
 
-def is_shiny_enemy(enemyNumber, img_rgb, img_gray):
+def identifyAlly(pokemonNameDict, trainingDict, imgGray):
     ''' Test images are 384 x 256 '''
-    ''' 152, 15 is top left '''
-    ''' 231, 94 is bottom right '''
-    return False
+    ''' 23, 89 is top left '''
+    ''' 102, 168 is bottom right '''
+    tuples = []
+
+    portion = imgGray[89:168 + 1, 23:102 + 1]
+    for key in trainingDict:
+        template = trainingDict[key]
+
+        width, height = template.shape[::-1]
+        templateSet = set()
+        for i in range(height):
+            for j in range(width):
+                templateSet.add(template[i][j])
+
+        portionCopy = np.copy(portion)
+        width, height = portionCopy.shape[::-1]
+        for i in range(height):
+            for j in range(width):
+                testing = portion[i][j]
+                if not pixelInRange(testing, templateSet):
+                    portionCopy[i][j] = 254
+
+        # templateSetExpand = set()
+        # for item in templateSet:
+        #     templateSetExpand.add(item)
+        #     templateSetExpand.add(item + 1)
+        #     templateSetExpand.add(item - 1)
+        #     templateSetExpand.add(item + 2)
+        #     templateSetExpand.add(item - 2)
+        # portionCopy[not portionCopy in templateSetExpand] = 254
+
+        # plt.subplot(131),
+        # plt.imshow(portion, cmap='gray')
+        # plt.title('Portion Image'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.subplot(132),
+        # plt.imshow(portionCopy, cmap='gray')
+        # plt.title('Modified Portion'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.subplot(133),
+        # plt.imshow(template, cmap='gray')
+        # plt.title('Template Image'),
+        # plt.xticks([]), plt.yticks([])
+        #
+        # plt.show()
+
+        res = cv2.matchTemplate(portionCopy, template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+        # number = math.floor(key)
+        tuples.append([key, max_val])
+
+    tuples.sort(key=lambda x: x[1])
+    tuples.reverse()
+
+    number = tuples[0][0]
+    value = tuples[0][1]
+
+    name = pokemonNameDict[math.floor(number)]
+
+    print("The most likely ally is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
+
+    # for i in range(8):
+    #     print(tuples[i])
+
+    return number
+
+
+# def is_shiny_enemy(enemyNumber, imgRGB, imgGray):
+#     ''' Test images are 384 x 256 '''
+#     ''' 152, 15 is top left '''
+#     ''' 231, 94 is bottom right '''
+#     return False
 
 
 def main():
-    pokemon_name_dict = load_dict()
+    pokemonNameDict = loadDict()
 
-    training_dict_bw = get_training_dict()
+    folderStringAlly = "training_sprites_ally"
+    trainingDictAlly = getTrainingDict(folderStringAlly)
 
-    folderString = "testing_images_grass"
-    # folderString = "testing_images_cave"
-    # folderString = "testing_images_path"
-    # folderString = "testing_images_buildings"
-    # folderString = "advanced_testing"
+    folderStringEnemy = "training_sprites_enemy"
+    trainingDictEnemy = getTrainingDict(folderStringEnemy)
 
-    testing_set_rgb = get_testing_set(folderString)
-    testing_set_bw = make_set_bw(testing_set_rgb)
+    folderStringTest = "testing_images_grass"
+    # folderStringTest = "testing_images_cave"
 
-    for i in range(len(testing_set_rgb)):
-        img_rgb = testing_set_rgb[i]
-        img_gray = testing_set_bw[i]
+    # folderStringTest = "testing_images_path"
+    # folderStringTest = "testing_images_buildings"
+    # folderStringTest = "advanced_testing"
 
-        identify_all_pokemon(pokemon_name_dict, training_dict_bw, img_rgb, img_gray)
-        enemyNumber = identify_enemy(pokemon_name_dict, training_dict_bw, img_gray)
-        if is_shiny_enemy(enemyNumber, img_rgb, img_gray):
-            print("IT'S SHINY")
+    # folderStringTest = "testing_images_shiny"
+
+    testingSetRGB = getTestingList(folderStringTest)
+    testingListGray = makeListGray(testingSetRGB)
+
+    for i in range(len(testingSetRGB)):
+        imgRGB = testingSetRGB[i]
+        imgGray = testingListGray[i]
+
+        identifyAllPokemon(pokemonNameDict, trainingDictEnemy, imgRGB, imgGray)
+
+        startTime = time.time()
+        allyNumber = identifyAlly(pokemonNameDict, trainingDictAlly, imgGray)
+        endTime = time.time()
+        print(round(endTime - startTime, 5), "seconds to find ally")
+
+        startTime = time.time()
+        enemyNumber = identifyEnemy(pokemonNameDict, trainingDictEnemy, imgGray)
+        endTime = time.time()
+        print(round(endTime - startTime, 5), "seconds to find enemy")
+
+        # if is_shiny_enemy(enemyNumber, imgRGB, imgGray):
+        #     print("IT'S SHINY")
         cv2.waitKey()
+        print()
 
     # plt.subplot(221),
     # plt.imshow(img, cmap='gray')
@@ -259,7 +364,7 @@ def main():
     # plt.title('Edge Image'),
     # plt.xticks([]), plt.yticks([])
     #
-    # img2 = training_dict_bw[19]
+    # img2 = trainingDictEnemy[19]
     # edges2 = cv2.Canny(img2, 100, 200)
     #
     # plt.subplot(223),
