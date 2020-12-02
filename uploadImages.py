@@ -2,6 +2,28 @@ import cv2
 import numpy as np
 import os
 import csv
+import time
+import shutil
+
+
+def addFilesToFolder(testFolders):
+    if os.path.exists("testing_images_all"):
+        os.remove("testing_images_all")
+    else:
+        # print("The file does not exist")
+        pass
+    # remove folder if it already exists
+    if os.path.exists("testing_images_all/"):
+        shutil.rmtree("testing_images_all/")
+    else:
+        os.mkdir("testing_images_all/")
+
+    for folder in testFolders:
+        for file in os.listdir(folder):
+            string = folder + "/" + file
+            shutil.copy(string, "testing_images_all")
+    time.sleep(2)
+    return "testing_images_all"
 
 
 def getTrainingDict(folderString):

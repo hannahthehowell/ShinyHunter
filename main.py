@@ -6,7 +6,69 @@ import time
 import winsound
 import pyautogui
 import os
-import glob
+import random
+
+
+def testing(pokemonNameDict, trainingDictAlly, trainingDictEnemy):
+    valid = False
+    while not valid:
+        print("\nPlease select which set to test")
+        print("1: Grass Images")
+        print("2: Cave Images")
+        print("3: Path Images")
+        print("4: Building Images")
+        print("5: Shiny Images")
+        print("6: All Images shuffled")
+        print("7: Advanced Images")
+        selection = eval(input("Selection: "))
+        print("\n")
+
+        if selection in range(1, 7+1):
+            valid = True
+
+    testFolders = ["testing_images_grass", "testing_images_cave", "testing_images_path", "testing_images_buildings", "testing_images_shiny"]
+
+    if selection == 1:
+        folderStringTest = testFolders[0]
+    elif selection == 2:
+        folderStringTest = testFolders[1]
+    elif selection == 3:
+        folderStringTest = testFolders[2]
+    elif selection == 4:
+        folderStringTest = testFolders[3]
+    elif selection == 5:
+        folderStringTest = testFolders[4]
+    elif selection == 6:
+        folderStringTest = uploadImages.addFilesToFolder(testFolders)
+    elif selection == 7:
+        folderStringTest = "advanced_testing"
+
+    testingSetRGB = uploadImages.getTestingList(folderStringTest)
+    if selection == 6:
+        random.shuffle(testingSetRGB)
+    testingListGray = uploadImages.makeListGray(testingSetRGB)
+
+    for i in range(len(testingSetRGB)):
+        imgRGB = testingSetRGB[i]
+        imgGray = testingListGray[i]
+
+        startTime = time.time()
+        allyNumber = imageProcessing.identifyAlly(pokemonNameDict, trainingDictAlly, imgGray)
+        endTime = time.time()
+        print(round(endTime - startTime, 5), "seconds to find ally")
+
+        startTime = time.time()
+        enemyNumber = imageProcessing.identifyEnemy(pokemonNameDict, trainingDictEnemy, imgGray)
+        endTime = time.time()
+        print(round(endTime - startTime, 5), "seconds to find enemy")
+
+        imageProcessing.identifyAllPokemon(pokemonNameDict, imgRGB, imgGray, trainingDictAlly, allyNumber, trainingDictEnemy, enemyNumber)
+
+        if imageProcessing.isShinyEnemy(enemyNumber):
+            print("IT'S SHINY")
+
+        cv2.waitKey()
+        print()
 
 
 def checkInBattle():
@@ -33,15 +95,7 @@ def checkInBattle():
     return False
 
 
-def main():
-    pokemonNameDict = uploadImages.loadDict()
-
-    folderStringAlly = "training_sprites_ally"
-    trainingDictAlly = uploadImages.getTrainingDict(folderStringAlly)
-
-    folderStringEnemy = "training_sprites_enemy"
-    trainingDictEnemy = uploadImages.getTrainingDict(folderStringEnemy)
-
+def run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown):
     # remove screenshot if it already exists
     if os.path.exists("Screenshot.png"):
         os.remove("Screenshot.png")
@@ -80,18 +134,30 @@ def main():
                 break
 
             # run up
-            pyautogui.keyDown('w')
-            time.sleep(0.6)
-            pyautogui.keyUp('w')
+            if upDown:
+                pyautogui.keyDown('w')
+                time.sleep(0.6)
+                pyautogui.keyUp('w')
+            # run left
+            else:
+                pyautogui.keyDown('a')
+                time.sleep(0.6)
+                pyautogui.keyUp('a')
 
             # check if in battle
             if checkInBattle():
                 break
 
-            # run down,
-            pyautogui.keyDown('s')
-            time.sleep(0.6)
-            pyautogui.keyUp('s')
+            # run down
+            if upDown:
+                pyautogui.keyDown('s')
+                time.sleep(0.6)
+                pyautogui.keyUp('s')
+            # run right
+            else:
+                pyautogui.keyDown('d')
+                time.sleep(0.6)
+                pyautogui.keyUp('d')
 
         encounters += 1
         print("Encounters:", encounters)
@@ -123,8 +189,19 @@ def main():
         # time.sleep(2)
 
         if imageProcessing.isShinyEnemy(enemyNumber):
-            # print("IT'S SHINY")
             searching = False
+            try:
+                left, top, width, height = pyautogui.locateOnScreen("Pause.png")
+            except (pyautogui.ImageNotFoundException, TypeError):
+                print("Pause was NOT found on the screen")
+                exit(4)
+
+            # Move mouse to Pause location and click
+            pyautogui.moveTo(x=(left + width / 2), y=(top + height / 2))
+            pyautogui.mouseDown()
+            time.sleep(0.2)
+            pyautogui.mouseUp()
+
             while True:
                 print("IT'S SHINY")
                 winsound.Beep(2000, 100)
@@ -139,86 +216,54 @@ def main():
                 exit(3)
 
             # Move mouse to Run location and click
-            pyautogui.moveTo(x=(left + width/2), y=(top + height/2))
+            pyautogui.moveTo(x=(left + width / 2), y=(top + height / 2))
             pyautogui.mouseDown()
             time.sleep(0.2)
             pyautogui.mouseUp()
 
-        # searching = False
 
+def main():
+    pokemonNameDict = uploadImages.loadDict()
 
+    folderStringAlly = "training_sprites_ally"
+    trainingDictAlly = uploadImages.getTrainingDict(folderStringAlly)
 
-# def main():
-#     pokemonNameDict = uploadImages.loadDict()
-#
-#     folderStringAlly = "training_sprites_ally"
-#     trainingDictAlly = uploadImages.getTrainingDict(folderStringAlly)
-#
-#     folderStringEnemy = "training_sprites_enemy"
-#     trainingDictEnemy = uploadImages.getTrainingDict(folderStringEnemy)
+    folderStringEnemy = "training_sprites_enemy"
+    trainingDictEnemy = uploadImages.getTrainingDict(folderStringEnemy)
 
-    # folderStringTest = "testing_images_grass"
-    # # folderStringTest = "testing_images_cave"
-    #
-    # # folderStringTest = "testing_images_path"
-    # # folderStringTest = "testing_images_buildings"
-    # # folderStringTest = "advanced_testing"
-    #
-    # # folderStringTest = "testing_images_shiny"
-    #
-    # testingSetRGB = uploadImages.getTestingList(folderStringTest)
-    # testingListGray = uploadImages.makeListGray(testingSetRGB)
-    #
-    # for i in range(len(testingSetRGB)):
-    #     imgRGB = testingSetRGB[i]
-    #     imgGray = testingListGray[i]
-    #
-    #     startTime = time.time()
-    #     allyNumber = imageProcessing.identifyAlly(pokemonNameDict, trainingDictAlly, imgGray)
-    #     endTime = time.time()
-    #     print(round(endTime - startTime, 5), "seconds to find ally")
-    #
-    #     startTime = time.time()
-    #     enemyNumber = imageProcessing.identifyEnemy(pokemonNameDict, trainingDictEnemy, imgGray)
-    #     endTime = time.time()
-    #     print(round(endTime - startTime, 5), "seconds to find enemy")
-    #
-    #     imageProcessing.identifyAllPokemon(pokemonNameDict, imgRGB, imgGray, trainingDictAlly, allyNumber, trainingDictEnemy, enemyNumber)
-    #
-    #     if imageProcessing.isShinyEnemy(enemyNumber):
-    #         print("IT'S SHINY")
-    #         # while True:
-    #         #     print("IT'S SHINY")
-    #         #     winsound.Beep(2000, 100)
-    #         #     time.sleep(2)
-    #
-    #     cv2.waitKey()
-    #     print()
+    print("Pick which mode you'd like to run")
+    print("1: Testing Mode")
+    print("2: Running Mode")
+    selection = eval(input("Selection: "))
 
-    # plt.subplot(221),
-    # plt.imshow(img, cmap='gray')
-    # plt.title('Original Image'),
-    # plt.xticks([]), plt.yticks([])
-    #
-    # plt.subplot(222),
-    # plt.imshow(edges, cmap='gray')
-    # plt.title('Edge Image'),
-    # plt.xticks([]), plt.yticks([])
-    #
-    # img2 = trainingDictEnemy[19]
-    # edges2 = cv2.Canny(img2, 100, 200)
-    #
-    # plt.subplot(223),
-    # plt.imshow(img2, cmap='gray')
-    # plt.title('Original Image'),
-    # plt.xticks([]), plt.yticks([])
-    #
-    # plt.subplot(224),
-    # plt.imshow(edges2, cmap='gray')
-    # plt.title('Edge Image'),
-    # plt.xticks([]), plt.yticks([])
-    #
-    # plt.show()
+    while selection != 1 and selection != 2:
+        print("\nThat selection was invalid\n")
+        print("Pick which mode you'd like to run")
+        print("1: Testing Mode")
+        print("2: Running Mode")
+        selection = eval(input("Selection: "))
+
+    if selection == 1:
+        testing(pokemonNameDict, trainingDictAlly, trainingDictEnemy)
+    elif selection == 2:
+        print("\nWould you like to run")
+        print("1: Up and Down")
+        print("2: Left and Right")
+        selection = eval(input("Selection: "))
+        while selection != 1 and selection != 2:
+            print("\nWould you like to run")
+            print("1: Up and Down")
+            print("2: Left and Right")
+            selection = eval(input("Selection: "))
+        if selection == 1:
+            upDown = True
+        elif selection == 2:
+            upDown = False
+        else:
+            exit(5)
+        print("\nPlease make sure DeSmuMe is pulled up and your player is in the grass or a cave")
+        input("Press 'Enter' to continue ")
+        run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown)
 
 
 main()
