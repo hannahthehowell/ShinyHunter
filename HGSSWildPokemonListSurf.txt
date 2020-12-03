@@ -1,0 +1,30 @@
+Route 30, Poliwag, Poliwhirl
+Route 31, Poliwag, Poliwhirl
+Route 32, Tentacool, Quagsire, Tentacruel
+Route 34, Tentacool, Tentacruel
+Route 35, Psyduck, Golduck
+Route 40, Tentacool, Tentacruel
+Route 41, Tentacool, Tentacruel, Mantine
+Route 42, Goldeen, Seaking
+Route 43, Magikarp
+Route 44, Poliwag, Poliwhirl
+Route 45, Magikarp
+Route 47, Tentacool, Seel, Staryu
+Blackthorn City, Magikarp
+Cherrygrove City, Tentacool, Tentacruel
+Cianwood City, Tentacool, Tentacruel
+Cliff Edge Gate, Wooper, Quagsire
+Dark Cave, Magikarp
+Dragon's Den, Magikarp, Dratini
+Ekruteak City, Poliwag, Poliwhirl
+Ilex Forest, Psyduck, Golduck
+Lake of Rage, Magikarp, Gyrarados
+Mt. Mortar, Goldeen, Seaking
+Mt. Silver, Seaking, Goldeen, Poliwag, Poliwhirl
+New Bark Town, Tentacool, Tentacruel
+Olivine City, Tentacool, Tentacruel
+Ruins of Alph, Wooper, Quagsire
+Slowpoke Well, Slowpoke, Slowbro
+Union Cave, Wooper, Quagsire, Tentacool, Tentacruel
+Violet City, Poliwag, Poliwhirl
+Whirl Islands, Tentacool, Horsea, Tentacruel, Seadra

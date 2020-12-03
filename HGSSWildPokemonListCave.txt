@@ -1,0 +1,8 @@
+Cliff Cave, Golbat, Machop, Geodude, Onix, Krabby, Kingler, Zubat, Machoke, Graveler, Wooper, Quagsire, Misdreavus, Steelix
+Dark Cave, Zubat, Geodude, Graveler, Wobbuffet, Golbat, Dunsparce
+Ice Path, Zubat, Golbat, Swinub, Jynx, Delibird
+Mt. Mortar, Machop, Geodude, Rattata, Zubat, Marill, Machoke, Graveler, Raticate, Golbat
+Mt. Silver, Onix, Ursaring, Donphan, Graveler, Teddiursa, Phanpy, Golbat, Larvitar, Quagsire, Misdreavus, Golduck, Pupitar, Steelix, Sneasel
+Slowpoke Well, Zubat, Slowpoke, Golbat
+Union Cave, Rattata, Sandshrew, Zubat, Geodude, Onix, Raticate, Golbat
+Whirl Islands, Zubat, Krabby, Seel, Golbat

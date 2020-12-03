@@ -1,0 +1,22 @@
+Route 29, Pidgey, Sentret, Rattata, Hoothoot
+Route 30, Caterpie, Pidgey, Metapod, Weedle, Ledyba, Kakuna, Rattata, Hoothoot, Spinarak
+Route 31, Caterpie, Pidgey, Metapod, Weedle, Ledyba, Kakuna, Bellsprout, Rattata, Hoothoot, Spinarak
+Route 32, Rattata, Bellsprout, Mareep, Hoppip, Zubat, Ekans, Wooper
+Route 33, Rattata, Hoppip, Spearow, Zubat, Ekans
+Route 34, Rattata, Drowzee, Abra, Ditto
+Route 35, NidoranF, NidoranM, Abra, Drowzee, Pidgey, Ditto, Hoothoot, Yanma
+Route 36, Pidgey, NidoranF, NidoranM, Hoothoot, Vulpix, Growlithe, Stantler
+Route 37, Pidgey, Hoothoot, Ledyba, Spinarak, Stantler, Vulpix, Growlithe, Pidgeotto
+Route 38, Rattata, Raticate, Meowth, Magnemite, Farfetch'd, Tauros, Snubbull, Miltank
+Route 39, Rattata, Raticate, Meowth, Magnemite, Farfetch'd, Tauros, Snubbull, Miltank
+Route 42, Spearow, Zubat, Mankey, Mareep, Flaaffy
+Route 43, Pidgeotto, Flaaffy, Girafarig, Venonat, Noctowl, Mareep
+Route 44, Weepinbell, Tangela, Bellsprout, Lickitung
+Route 45, Geodude, Graveler, Gligar, Teddiursa, Phanpy, Skarmory
+Route 46, Rattata, Spearow, Geodude
+Route 47, Ditto, Farfetch'd, Noctowl, Miltank, Raticate, Spearow, Fearow, Gloom
+Route 48, Vulpix, Growlithe, Fearow, Gloom, Farfetch'd, Tauros, Hoppip, Diglet, Girafarig
+Ilex Forest, Caterpie, Metapod, Weedle, Kakuna, Zubat, Oddish, Paras
+National Park, Caterpie, Metapid, Weedle, Kakuna, Hoothoot, Sunkern, Pidgey
+Ruins of Alph, Natu, Smeargle
+Mt. Silver, Ponyta, Tangela, Rapidash, Sneasel, Ursaring, Donphan, Doduo, Dodrio, Golbat, Onix, Teddiursa, Phanpy, Golduck, Larvitar, Quagsire, Misdreavus
