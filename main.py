@@ -7,7 +7,7 @@ import winsound
 import pyautogui
 import os
 import random
-
+# testing if cloning worked
 
 def testing(pokemonNameDict, trainingDictAlly, trainingDictEnemy):
     valid = False
