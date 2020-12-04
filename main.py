@@ -132,7 +132,11 @@ def run(pokemonNameDict, enemyDict, upDown):
             pyautogui.mouseDown()
             time.sleep(0.2)
             pyautogui.mouseUp()
-            time.sleep(3.5)
+            time.sleep(1)
+            pyautogui.mouseDown()
+            time.sleep(0.2)
+            pyautogui.mouseUp()
+            time.sleep(1)
 
 
 def main():
