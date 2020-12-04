@@ -10,19 +10,12 @@ import os
 
 def checkInBattle():
     try:
-        locationRun = pyautogui.locateOnScreen("Images/Run.png")
-        locationOption = pyautogui.locateOnScreen("Images/Options.png")
-        if locationRun is None and locationOption is None:
-            for i in range(7):
-                print(".", end="")
-                time.sleep(0.5)
-        elif locationRun is None:
-            pass
-        else:
+        locationHealth = pyautogui.locateOnScreen("Images/HealthBar.png")
+        if locationHealth is not None:
             print()
             return True
     except pyautogui.ImageNotFoundException:
-        print("RUN was NOT found on the screen")
+        print("Health Bar was NOT found on the screen")
     except TypeError:
         print("TypeError")
         exit(2)
@@ -126,17 +119,20 @@ def run(pokemonNameDict, enemyDict, upDown):
                 time.sleep(0.75)
         else:
             # identify Run on screen
-            try:
-                left, top, width, height = pyautogui.locateOnScreen("Images/Run.png")
-            except (pyautogui.ImageNotFoundException, TypeError):
-                print("RUN was NOT found on the screen")
-                exit(3)
+            while True:
+                try:
+                    left, top, width, height = pyautogui.locateOnScreen("Images/Run.png")
+                    break
+                except (pyautogui.ImageNotFoundException, TypeError):
+                    print("...", end="")
+                    pass
 
             # Move mouse to Run location and click
             pyautogui.moveTo(x=(left + width / 2), y=(top + height / 2))
             pyautogui.mouseDown()
             time.sleep(0.2)
             pyautogui.mouseUp()
+            time.sleep(3.5)
 
 
 def main():
@@ -206,8 +202,7 @@ def main():
     upDown = True
     if selection == 2:
         upDown = False
-    else:
-        exit(5)
+
     print("\nPlease make sure DeSmuMe is pulled up and your player is in " + areaList[selectionIndex][0])
     input("Press 'Enter' to continue ")
     run(pokemonNameDict, enemyDict, upDown)
