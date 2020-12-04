@@ -2,62 +2,58 @@ import cv2
 import numpy as np
 import os
 import csv
-import time
 import shutil
 
 
-def addFilesToFolder(testFolders):
-    if os.path.exists("testing_images_all"):
-        os.remove("testing_images_all")
-    else:
-        # print("The file does not exist")
-        pass
-    # remove folder if it already exists
-    if os.path.exists("testing_images_all/"):
-        shutil.rmtree("testing_images_all/")
-    else:
-        os.mkdir("testing_images_all/")
-
-    for folder in testFolders:
-        for file in os.listdir(folder):
-            string = folder + "/" + file
-            shutil.copy(string, "testing_images_all")
-    time.sleep(2)
-    return "testing_images_all"
-
-
-def getTrainingDict(folderString):
-    imageDict = {}
-    for filename in os.listdir(folderString):
-        path = folderString + "/" + filename
-        im = cv2.imread(path, 0)
-        imc = cropImgGray(im, float(filename.strip(".png")))
-        imageDict[float(filename.strip(".png"))] = imc
-    return imageDict
-
-
-def getTestingList(folderString):
-    imageSet = []
-    for filename in os.listdir(folderString):
-        im = cv2.imread(os.path.join(folderString, filename))
-        imageSet.append(im)
-    return imageSet
-
-
-def makeListGray(image_set):
-    bwSet = []
-    for image in image_set:
-        bwSet.append(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
-    return bwSet
-
-
 def loadDict():
-    input_file = csv.reader(open("PokemonListByNumber.csv", "r"))
+    inputFile = csv.reader(open("PokemonListByNumber.csv", "r"))
     dictionary = {}
-    for row in input_file:
+    for row in inputFile:
         number, name = row
         dictionary[int(number)] = name
     return dictionary
+
+
+def loadList(inputString):
+    lineList = [line.rstrip('\n') for line in open(inputString)]
+    masterList = []
+    for i in range(len(lineList)):
+        masterList.append(lineList[i].split(", "))
+    return masterList
+
+
+def listToNumbers(pokemonNameDict, huntingList):
+    numberList = []
+    for i in range(len(huntingList)):
+        pokemonName = huntingList[i]
+        for number, name in pokemonNameDict.items():
+            if pokemonName == name:
+                numberList.append(int(number))
+                break
+        assert len(numberList) == (i+1), ("Pokemon Name Misspelled:", pokemonName)
+
+    return numberList
+
+
+def createAndFillSearchFolder(huntingNumbers):
+    """ This For-loop found at https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder """
+    folder = "SearchImages"
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    for filename in os.listdir("EnemySprites"):
+        path = "EnemySprites/" + filename
+        if float(filename.strip(".png"))//1 in huntingNumbers:
+            shutil.copy(path, "SearchImages/")
+
+    return "SearchImages"
 
 
 def cropImgGray(img, key):
@@ -102,3 +98,13 @@ def cropImgGray(img, key):
                 cropCopy[row][col] = crop[row][col] * 0.9784948631
 
     return cropCopy
+
+
+def getImageDict(folderString):
+    imageDict = {}
+    for filename in os.listdir(folderString):
+        path = folderString + "/" + filename
+        im = cv2.imread(path, 0)
+        imc = cropImgGray(im, float(filename.strip(".png")))
+        imageDict[float(filename.strip(".png"))] = imc
+    return imageDict

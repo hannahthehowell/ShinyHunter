@@ -18,7 +18,7 @@ Dark Cave, Magikarp
 Dragon's Den, Magikarp, Dratini
 Ekruteak City, Poliwag, Poliwhirl
 Ilex Forest, Psyduck, Golduck
-Lake of Rage, Magikarp, Gyrarados
+Lake of Rage, Magikarp, Gyarados
 Mt. Mortar, Goldeen, Seaking
 Mt. Silver, Seaking, Goldeen, Poliwag, Poliwhirl
 New Bark Town, Tentacool, Tentacruel

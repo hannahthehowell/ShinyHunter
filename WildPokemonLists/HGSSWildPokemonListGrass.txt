@@ -15,8 +15,8 @@ Route 44, Weepinbell, Tangela, Bellsprout, Lickitung
 Route 45, Geodude, Graveler, Gligar, Teddiursa, Phanpy, Skarmory
 Route 46, Rattata, Spearow, Geodude
 Route 47, Ditto, Farfetch'd, Noctowl, Miltank, Raticate, Spearow, Fearow, Gloom
-Route 48, Vulpix, Growlithe, Fearow, Gloom, Farfetch'd, Tauros, Hoppip, Diglet, Girafarig
+Route 48, Vulpix, Growlithe, Fearow, Gloom, Farfetch'd, Tauros, Hoppip, Diglett, Girafarig
 Ilex Forest, Caterpie, Metapod, Weedle, Kakuna, Zubat, Oddish, Paras
-National Park, Caterpie, Metapid, Weedle, Kakuna, Hoothoot, Sunkern, Pidgey
+National Park, Caterpie, Metapod, Weedle, Kakuna, Hoothoot, Sunkern, Pidgey
 Ruins of Alph, Natu, Smeargle
 Mt. Silver, Ponyta, Tangela, Rapidash, Sneasel, Ursaring, Donphan, Doduo, Dodrio, Golbat, Onix, Teddiursa, Phanpy, Golduck, Larvitar, Quagsire, Misdreavus

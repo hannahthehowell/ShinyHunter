@@ -6,23 +6,20 @@ import time
 import winsound
 import pyautogui
 import os
-import random
 
 
 def checkInBattle():
     try:
-        locationRun = pyautogui.locateOnScreen("Run.png")
-        locationOption = pyautogui.locateOnScreen("Options.png")
+        locationRun = pyautogui.locateOnScreen("Images/Run.png")
+        locationOption = pyautogui.locateOnScreen("Images/Options.png")
         if locationRun is None and locationOption is None:
-            for i in range(5):
+            for i in range(7):
                 print(".", end="")
                 time.sleep(0.5)
         elif locationRun is None:
-            # print("RUN was NOT found on the screen")
             pass
         else:
             print()
-            # print("RUN was found on the screen")
             return True
     except pyautogui.ImageNotFoundException:
         print("RUN was NOT found on the screen")
@@ -33,20 +30,15 @@ def checkInBattle():
     return False
 
 
-def run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown):
+def run(pokemonNameDict, enemyDict, upDown):
     # remove screenshot if it already exists
     if os.path.exists("Screenshot.png"):
         os.remove("Screenshot.png")
-    else:
-        # print("The file does not exist")
-        pass
 
     # identify Desmume on screen
     try:
-        left, top, width, height = pyautogui.locateOnScreen("Options.png")
-        # print("DeSmuMe was found on the screen")
+        left, top, width, height = pyautogui.locateOnScreen("Images/Options.png")
     except (pyautogui.ImageNotFoundException, TypeError):
-        # print("DeSmuMe was NOT found on the screen")
         exit(1)
 
     # Move mouse to Desmume location and click
@@ -60,9 +52,6 @@ def run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown):
         # remove screenshot if it already exists
         if os.path.exists("Screenshot.png"):
             os.remove("Screenshot.png")
-        else:
-            # print("The file does not exist")
-            pass
 
         # running while loop
         inBattle = False
@@ -110,26 +99,17 @@ def run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown):
         time.sleep(2)
 
         # image processing
-        imgRGB = cv2.imread("Screenshot.png")
         imgGray = cv2.imread("Screenshot.png", 0)
 
         startTime = time.time()
-        allyNumber = imageProcessing.identifyAlly(pokemonNameDict, trainingDictAlly, imgGray)
-        endTime = time.time()
-        print(round(endTime - startTime, 5), "seconds to find ally")
-
-        startTime = time.time()
-        enemyNumber = imageProcessing.identifyEnemy(pokemonNameDict, trainingDictEnemy, imgGray)
+        enemyNumber = imageProcessing.identifyEnemy(pokemonNameDict, enemyDict, imgGray)
         endTime = time.time()
         print(round(endTime - startTime, 5), "seconds to find enemy")
-
-        # imageProcessing.identifyAllPokemon(pokemonNameDict, imgRGB, imgGray, trainingDictAlly, allyNumber, trainingDictEnemy, enemyNumber)
-        # time.sleep(2)
 
         if imageProcessing.isShinyEnemy(enemyNumber):
             searching = False
             try:
-                left, top, width, height = pyautogui.locateOnScreen("Pause.png")
+                left, top, width, height = pyautogui.locateOnScreen("Images/Pause.png")
             except (pyautogui.ImageNotFoundException, TypeError):
                 print("Pause was NOT found on the screen")
                 exit(4)
@@ -147,8 +127,7 @@ def run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown):
         else:
             # identify Run on screen
             try:
-                left, top, width, height = pyautogui.locateOnScreen("Run.png")
-                # print("RUN was found on the screen again")
+                left, top, width, height = pyautogui.locateOnScreen("Images/Run.png")
             except (pyautogui.ImageNotFoundException, TypeError):
                 print("RUN was NOT found on the screen")
                 exit(3)
@@ -180,50 +159,73 @@ def main():
         print("4: Surfing (anywhere)")
         selection = eval(input("Selection: "))
 
+    listString = "WildPokemonLists/"
+    listString += "HGSSWildPokemonList"
     if selection == 1:
-        pass
+        listString += "Grass"
     elif selection == 2:
-        pass
+        listString += "Cave"
     elif selection == 3:
-        pass
+        listString += "Building"
+    elif selection == 4:
+        listString += "Surf"
     else:
         exit(2)
 
+    listString += ".txt"
+    areaList = uploadImages.loadList(listString)
 
-    folderStringAlly = "training_sprites_ally"
-    trainingDictAlly = uploadImages.getTrainingDict(folderStringAlly)
+    print("Please select which area you'd like to hunt in")
+    for i in range(len(areaList)):
+        print(str(i+1) + ": " + areaList[i][0])
 
-    folderStringEnemy = "training_sprites_enemy"
-    trainingDictEnemy = uploadImages.getTrainingDict(folderStringEnemy)
+    selection = eval(input("\nSelection: "))
+    while selection < 1 or selection > len(areaList):
+        print("\nThat selection was invalid\n")
+        selection = eval(input("Selection: "))
 
-    print("Pick which mode you'd like to run")
-    print("1: Testing Mode")
-    print("2: Running Mode")
+    selectionIndex = selection - 1
+    huntingList = areaList[selectionIndex][1:]
+
+    huntingNumbers = uploadImages.listToNumbers(pokemonNameDict, huntingList)
+
+    searchFolderName = uploadImages.createAndFillSearchFolder(huntingNumbers)
+
+    enemyDict = uploadImages.getImageDict(searchFolderName)
+
+    print("\nWould you like to run")
+    print("1: Up and Down")
+    print("2: Left and Right")
     selection = eval(input("Selection: "))
-
-
-
-    if selection == 1:
-        testing(pokemonNameDict, trainingDictAlly, trainingDictEnemy)
-    elif selection == 2:
+    while selection != 1 and selection != 2:
         print("\nWould you like to run")
         print("1: Up and Down")
         print("2: Left and Right")
         selection = eval(input("Selection: "))
-        while selection != 1 and selection != 2:
-            print("\nWould you like to run")
-            print("1: Up and Down")
-            print("2: Left and Right")
-            selection = eval(input("Selection: "))
-        if selection == 1:
-            upDown = True
-        elif selection == 2:
-            upDown = False
-        else:
-            exit(5)
-        print("\nPlease make sure DeSmuMe is pulled up and your player is in the grass or a cave")
-        input("Press 'Enter' to continue ")
-        run(pokemonNameDict, trainingDictAlly, trainingDictEnemy, upDown)
+
+    upDown = True
+    if selection == 2:
+        upDown = False
+    else:
+        exit(5)
+    print("\nPlease make sure DeSmuMe is pulled up and your player is in " + areaList[selectionIndex][0])
+    input("Press 'Enter' to continue ")
+    run(pokemonNameDict, enemyDict, upDown)
 
 
 main()
+
+
+def testAllWildLists():
+    pokemonNameDict = uploadImages.loadDict()
+    listStrings = ["WildPokemonLists/HGSSWildPokemonListGrass.txt", "WildPokemonLists/HGSSWildPokemonListCave.txt", "WildPokemonLists/HGSSWildPokemonListBuilding.txt", "WildPokemonLists/HGSSWildPokemonListSurf.txt"]
+    for listString in listStrings:
+        areaList = uploadImages.loadList(listString)
+        for area in areaList:
+            print(area[0])
+            huntingList = area[1:]
+            huntingNumbers = uploadImages.listToNumbers(pokemonNameDict, huntingList)
+            print(huntingNumbers)
+
+
+# testAllWildLists()
