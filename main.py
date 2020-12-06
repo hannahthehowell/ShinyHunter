@@ -38,7 +38,7 @@ def run(pokemonNameDict, enemyDict, upDown):
     pyautogui.click(x=left, y=(top + height + 5))
 
     # master while loop
-    encounters = 0
+    encounters = 2240
     searching = True
     while searching:
 
@@ -95,9 +95,44 @@ def run(pokemonNameDict, enemyDict, upDown):
         imgGray = cv2.imread("Screenshot.png", 0)
 
         startTime = time.time()
-        enemyNumber = imageProcessing.identifyEnemy(pokemonNameDict, enemyDict, imgGray)
+        enemyNumber, percentSure = imageProcessing.identifyEnemy(pokemonNameDict, enemyDict, imgGray)
         endTime = time.time()
         print(round(endTime - startTime, 5), "seconds to find enemy")
+
+        # If less than 50% sure, try again
+        if percentSure < 0.5:
+            # remove screenshot if it already exists
+            if os.path.exists("Screenshot.png"):
+                os.remove("Screenshot.png")
+
+            while True:
+                try:
+                    left, top, width, height = pyautogui.locateOnScreen("Images/Run.png")
+                    break
+                except (pyautogui.ImageNotFoundException, TypeError):
+                    print("...", end="")
+                    pass
+
+            # take screenshot - F12
+            pyautogui.keyDown('f12')
+            pyautogui.keyUp('f12')
+
+            # rename to "Screenshot"
+            pyautogui.write("Screenshot")
+            pyautogui.press('enter')
+            time.sleep(2)
+
+            # image processing
+            imgGray = cv2.imread("Screenshot.png", 0)
+
+            startTime = time.time()
+            enemyNumber, percentSure = imageProcessing.identifyEnemy(pokemonNameDict, enemyDict, imgGray)
+            endTime = time.time()
+            print(round(endTime - startTime, 5), "seconds to find enemy")
+
+            if percentSure < 0.5:
+                print("Unknown Enemy Pokemon")
+                exit(3)
 
         if imageProcessing.isShinyEnemy(enemyNumber):
             searching = False

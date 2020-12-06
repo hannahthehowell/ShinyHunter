@@ -54,7 +54,7 @@ def identifyEnemy(pokemonNameDict, trainingDict, imgGray):
 
     print("The most likely enemy is " + name + " with accuracy of " + str(round(value * 100, 2)) + "%")
 
-    return number
+    return number, value
 
 
 def isShinyEnemy(enemyNumber):
