@@ -6,6 +6,7 @@ import time
 import winsound
 import pyautogui
 import os
+from datetime import datetime
 
 
 # Used to determine if the game is in a battle
@@ -25,6 +26,31 @@ def checkInBattle():
     return False
 
 
+def resetROM():
+    # locate place to click through credits
+    try:
+        leftO, topO, widthO, heightO = pyautogui.locateOnScreen("Images/Options.png")
+    except (pyautogui.ImageNotFoundException, TypeError):
+        exit(1)
+
+    # reset ROM
+    pyautogui.keyDown('ctrl')
+    pyautogui.keyDown('r')
+    pyautogui.keyUp('r')
+    pyautogui.keyUp('ctrl')
+
+    # click until you find Options
+    while True:
+        try:
+            left, top, width, height = pyautogui.locateOnScreen("Images/Options.png")
+            break
+        except (pyautogui.ImageNotFoundException, TypeError):
+            pyautogui.moveTo(x=(leftO - widthO / 2), y=(topO - heightO))
+            pyautogui.mouseDown()
+            time.sleep(0.2)
+            pyautogui.mouseUp()
+
+
 # Used to run the emulator using PyAutoGUI
 def run(pokemonNameDict, enemyDict, upDown):
     # Remove testing screenshot if it already exists
@@ -41,11 +67,15 @@ def run(pokemonNameDict, enemyDict, upDown):
     pyautogui.click(x=left, y=(top + height + 5))
 
     # Counts the amount of Pokemon encountered
-    encounters = 0
+    encounters = 4800
 
     # Master while loop - only exits if it finds a shiny Pokemon
     searching = True
     while searching:
+        # If it has been about an hour, reset ROM
+        if encounters % 180 == 0:
+            time.sleep(3)
+            resetROM()
 
         # Remove screenshot if it already exists
         if os.path.exists("Screenshot.png"):
@@ -172,6 +202,7 @@ def run(pokemonNameDict, enemyDict, upDown):
             pyautogui.mouseUp()
 
             print("IT'S SHINY")
+            print(datetime.now())
             exit(5)  # toggle comment on this line to exit or beep
             while True:
                 winsound.Beep(2000, 100)
@@ -302,3 +333,6 @@ def testAllWildLists():
 
 
 # testAllWildLists()
+
+# time.sleep(3)
+# resetROM()
