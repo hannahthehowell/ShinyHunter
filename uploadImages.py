@@ -1,7 +1,7 @@
+import csv
 import cv2
 import numpy as np
 import os
-import csv
 import shutil
 
 
@@ -52,9 +52,10 @@ def createAndFillSearchFolder(huntingNumbers):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    for filename in os.listdir("EnemySprites"):
-        path = "EnemySprites/" + filename
-        if float(filename.strip(".png"))//1 in huntingNumbers:
+    # Of the file names in the sprites folders, add the mons that begin with a number in the hunting number list
+    for filename in os.listdir("HGSS_AllSprites"):
+        path = "HGSS_AllSprites/" + filename
+        if int(filename[0:3]) in huntingNumbers:
             shutil.copy(path, "SearchImages/")
 
     return "SearchImages"
@@ -64,7 +65,7 @@ def createAndFillSearchFolder(huntingNumbers):
 def cropImgGray(img, key):
     width, height = img.shape[::-1]
 
-    # initializes crop indices to max values
+    # Initializes crop indices to max values
     topIndex = height - 1
     bottomIndex = 0
     leftIndex = width - 1
@@ -117,6 +118,6 @@ def getImageDict(folderString):
     for filename in os.listdir(folderString):
         path = folderString + "/" + filename
         im = cv2.imread(path, 0)
-        imc = cropImgGray(im, float(filename.strip(".png")))
-        imageDict[float(filename.strip(".png"))] = imc
+        imc = cropImgGray(im, filename.strip(".png"))
+        imageDict[filename.strip(".png")] = imc
     return imageDict
