@@ -12,3 +12,5 @@ Please view the scripts running in these two videos:
 Wild Hunting: https://drive.google.com/file/d/17Mhwu9mQmquz-my4zdbALuYNB0W3rfsC/view?usp=sharing
 
 Egg Hatching: https://drive.google.com/file/d/1v7sH_eaBhdrUwpJpi1g3-R1YpIzkQCIh/view?usp=sharing
+
+Hatching Full-odds Shiny Eevee: https://www.twitch.tv/roxa_bandita/clip/DrabSpunkyBasenjiCharlieBitMe-hQipg-YstDaOipri
