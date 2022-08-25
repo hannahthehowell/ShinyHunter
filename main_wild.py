@@ -6,54 +6,31 @@ import time
 import pyautogui
 
 
+totalEncountered = 0
+
+
 # Used to determine if the game is in a battle
 def checkInBattle():
     return shl.isImageFound("HealthBar")
 
 
-# Resets the ROM to keep the time low and saves quick
-def resetROM():
-    # locate place to click through credits
-    try:
-        leftO, topO, widthO, heightO = pyautogui.locateOnScreen("AnchorImages/Options.png")
-    except (pyautogui.ImageNotFoundException, TypeError):
-        exit(1)
-
-    # reset ROM
-    pyautogui.keyDown('ctrl')
-    pyautogui.keyDown('r')
-    pyautogui.keyUp('r')
-    pyautogui.keyUp('ctrl')
-
-    # click until you find Options
-    while True:
-        if shl.isImageFound("Options"):
-            break
-        else:
-            pyautogui.moveTo(x=(leftO - widthO / 2), y=(topO - heightO))
-            pyautogui.mouseDown()
-            time.sleep(0.2)
-            pyautogui.mouseUp()
-
-
 # Used to run the emulator using PyAutoGUI
 def run(pokemonNameDict, enemyDict, upDown):
+    global totalEncountered
+
     # Remove testing screenshot if it already exists
     shl.removeScreenshot()
 
     shl.identifyDeSmuME()
 
-    # Counts the amount of Pokemon encountered
-    encounters = 0  # TODO Replace 0 with how many previous encounters
-
     # Master while loop - only exits if it finds a shiny Pokemon
     searching = True
     while searching:
         # If it has been about an hour, reset ROM
-        if encounters % 180 == 0 and encounters != 0:
+        if totalEncountered % 180 == 0 and totalEncountered != 0:
             print("Resetting ROM")
             time.sleep(3)
-            resetROM()
+            shl.resetROM()
 
         # While loop that makes the character run
         inBattle = False
@@ -88,8 +65,8 @@ def run(pokemonNameDict, enemyDict, upDown):
                 time.sleep(0.8)
                 pyautogui.keyUp('d')
 
-        encounters += 1
-        print("Encounters:", encounters)
+        totalEncountered += 1
+        print("Encounters:", totalEncountered)
 
         imgGray = shl.getScreenshot()
         startTime = time.time()
@@ -145,6 +122,8 @@ def run(pokemonNameDict, enemyDict, upDown):
 
 
 def main():
+    global totalEncountered
+
     # Populate a dictionary linking Pokemon name to number
     pokemonNameDict = uploadImages.loadDict("PokemonListByNumber.csv")
 
@@ -207,6 +186,8 @@ def main():
 
     # Create a dictionary of possible enemies and their numbers based on the newly created and filled folder
     enemyDict = uploadImages.getImageDict(searchFolderName)
+
+    totalEncountered = int(input("How many encounters have you had previously?: "))
 
     # Ask the user if they'd like to run up and down or left and right
     print("\nWould you like to run")

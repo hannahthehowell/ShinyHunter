@@ -159,7 +159,7 @@ def removeEggBackground(imgColor):
 
 
 # Used to determine if the daycare man is facing left
-def manFacingLeft(imgGray):
+def manFacingLeft(imgGray, daycareDoor=False):
     ''' Screenshots are 384 x 256 '''
     ''' 198, 63 is top left '''
     ''' 218, 87 is bottom right '''
@@ -171,7 +171,10 @@ def manFacingLeft(imgGray):
     }
 
     # Identify the portion of the screenshot that corresponds to the man
-    portion = imgGray[63:87 + 1, 198:218 + 1]
+    if not daycareDoor:
+        portion = imgGray[63:87 + 1, 198:218 + 1]
+    else:
+        portion = imgGray[64:86 + 1, 70:89 + 1]
 
     # For each direction, calculate its accuracy
     # Down

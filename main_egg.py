@@ -3,15 +3,18 @@ import imageProcessing
 import ShinyHuntLib as shl
 
 import cv2
+from datetime import datetime
 import time
 import pyautogui
 
 
-singleTileMovement = 0.018
+singleTileMovement = 0.022
 singleTilePause = 0.3
 
 
-totalHatched = 0  # TODO Replace 0 with how many previous hatches
+totalHatched = 0
+# 575 for eevee
+# 382 for magikarp
 
 hatchDict = {}
 numEggsInParty = 0
@@ -35,7 +38,7 @@ def goThroughDoor(key):
     pyautogui.keyDown(key)
     time.sleep(singleTileMovement*7)
     pyautogui.keyUp(key)
-    time.sleep(singleTilePause*12)
+    time.sleep(singleTilePause*10)
     if shl.isImageFound("Oh"):
         hatchingSequence()
 
@@ -64,20 +67,21 @@ def hatchingSequence():
     # Identify A Next on screen
     shl.clickScreen("ANext")
 
-    time.sleep(12)
+    totalHatched += 1
+    print("Hatching egg number", totalHatched, "at", datetime.now())
+
+    time.sleep(8)
 
     imgGray = shl.getScreenshot()
     fileNameOfClosestMatch = imageProcessing.identifyHatched(hatchDict, imgGray)
     if imageProcessing.isShinyPokemon(fileNameOfClosestMatch):
         shl.shinySequence()
 
-    totalHatched += 1
-    print("Hatching egg number", totalHatched)
-
     # Identify No on screen
-    shl.clickScreen("No")
+    while not shl.clickScreen("No", fatal=False):
+        pass
 
-    time.sleep(5)
+    time.sleep(2.5)
     numHatchedInParty += 1
 
 
@@ -88,21 +92,23 @@ def partyFullAndNotHatched():
     # Hatch full party of eggs
     while numHatchedInParty < 5:
         if hasBike:
-            time_len = 2
+            time_len = 4
         else:
-            time_len = 3
+            time_len = 6
 
         # Go up to top
         i = 0
         while i < time_len:
             # Go up
             pyautogui.keyDown('w')
-            time.sleep(3.5)
+            time.sleep(1.75)
             pyautogui.keyUp('w')
 
             # Check if hatching
             if shl.isImageFound("Oh"):
                 hatchingSequence()
+                if numHatchedInParty == 5:
+                    break
             else:
                 i += 1
 
@@ -111,7 +117,7 @@ def partyFullAndNotHatched():
         while i < time_len:
             # Go down
             pyautogui.keyDown('s')
-            time.sleep(3.5)
+            time.sleep(1.75)
             pyautogui.keyUp('s')
 
             # Check if hatching
@@ -121,27 +127,32 @@ def partyFullAndNotHatched():
                 i += 1
 
 
-# Used to move the player to pick up an egg and return to the lakeside area
-def pickupEggAndReturn():
+def talkToDayCareMan():
     global numEggsInParty
 
-    # move up 1 tile, right 4 tiles
-    moveNumTiles('w', 1)
-    moveNumTiles('d', 4)
-
     # Identify ATalk on screen
-    shl.clickScreen("ATalk", clickNum=5, waitTime=1.5)
+    shl.clickScreen("ATalk", waitTime=1)
 
-    # Identify YES on screen
-    shl.clickScreen("YesPickup", waitTime=6)
+    # Click ANext until identify YES on screen
+    while not shl.clickScreen("YesPickup", fatal=False, waitTime=5):
+        shl.clickScreen("ANext", fatal=False, waitTime=0.1)
+
+    numEggsInParty += 1
 
     # Identify ANext on screen
     shl.clickScreen("ANext")
 
+
+# Used to move the player to pick up an egg and return to the lakeside area
+def pickupEggAndReturn():
+    # move up 1 tile, right 4 tiles
+    moveNumTiles('w', 1)
+    moveNumTiles('d', 4)
+
+    talkToDayCareMan()
+
     # walk left 4 tiles
     moveNumTiles('a', 4)
-
-    numEggsInParty += 1
 
 
 # Used to move the player from the lakeside to the PC in the daycare
@@ -161,6 +172,15 @@ def moveFromPCToLakeside():
     moveNumTiles('s', 4)
     # go down door, walk tiles left 8
     goThroughDoor('s')
+
+    # imgGray = shl.getScreenshot()
+    # if imageProcessing.manFacingLeft(imgGray, daycareDoor=True):
+    #     moveNumTiles('a', 3)
+    #     moveNumTiles('w', 1)
+    #     talkToDayCareMan()
+    #     moveNumTiles('a', 5)
+    # else:
+    #     moveNumTiles('a', 8)
     moveNumTiles('a', 8)
 
 
@@ -173,7 +193,7 @@ def release2ndPartyMember(left, width, top):
     time.sleep(0.2)
     pyautogui.mouseUp()
 
-    time.sleep(0.5)
+    time.sleep(0.7)
 
     # Click release
     shl.clickScreen("Release", waitTime=0.5)
@@ -391,10 +411,14 @@ def run():
                 # Turn on shoes
                 shl.clickScreen("ShoesOff")
 
+            # Go up and down once
+            goUpAndDownOnce()
+
 
 def main():
     global hatchDict
     global hasBike
+    global totalHatched
 
     # Populate a dictionary linking Pokemon name to number
     pokemonNameDict = uploadImages.loadDict("PokemonListByNumber.csv")
@@ -423,6 +447,8 @@ def main():
 
     # Create a dictionary of possible enemies and their numbers based on the newly created and filled folder
     hatchDict = uploadImages.getImageDict(searchFolderName)
+
+    totalHatched = int(input("How many " + selection + " eggs have you hatched previously?: "))
 
     # Ask the user if they'd like to use a bike
     selection = 0

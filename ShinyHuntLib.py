@@ -50,6 +50,8 @@ def clickScreen(imageName, fatal=True, clickNum=1, waitTime=0):
 
         time.sleep(waitTime)
 
+    return True
+
 
 # Used to take and save a screenshot
 def getScreenshot(color=False):
@@ -89,3 +91,28 @@ def shinySequence():
     while True:
         winsound.Beep(2000, 100)
         time.sleep(0.75)
+
+
+# Resets the ROM to keep the time low and saves quick
+def resetROM():
+    # locate place to click through credits
+    try:
+        leftO, topO, widthO, heightO = pyautogui.locateOnScreen("AnchorImages/Options.png")
+    except (pyautogui.ImageNotFoundException, TypeError):
+        exit(1)
+
+    # reset ROM
+    pyautogui.keyDown('ctrl')
+    pyautogui.keyDown('r')
+    pyautogui.keyUp('r')
+    pyautogui.keyUp('ctrl')
+
+    # click until you find Options
+    while True:
+        if isImageFound("Options"):
+            break
+        else:
+            pyautogui.moveTo(x=(leftO - widthO / 2), y=(topO - heightO))
+            pyautogui.mouseDown()
+            time.sleep(0.2)
+            pyautogui.mouseUp()
