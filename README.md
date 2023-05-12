@@ -1,10 +1,10 @@
 # ShinyHunter
-Script to hunt for Shiny Pokemon by processing screenshots of a Pokemon game on an emulator, and controlling the emulator
+Script to hunt for Shiny Pokémon by processing screenshots of a Pokémon game on an emulator, and controlling the emulator
 
 ## Software Requirements
 DeSmuME Nintendo DS emulator version 0.9.11. (Untested compatibility with latest version 0.9.13).
 
-Pokemon HeartGold or SoulSilver ROM file.  Please acquire these file legally.
+Pokémon HeartGold or SoulSilver ROM file.  Please acquire these file legally.
 
 ## Running
 Please view the scripts running in these three videos:
@@ -40,6 +40,30 @@ include things such as gender, elemental form, and shiny status.
      * The last element is an *optional* 'S' that is present in the sprite's name if the Pokémon is shiny
  * Example of a sprite named "250.1.S.png" (aka shiny Ho-oh):
  ![Shiny Ho oh](/HGSS_AllSprites/250.1.S.png "Shiny Ho oh")
+
+### TestingScreenshots Directory
+This directory contains three directories (each with screenshot .png files) and one .png file. The purpose of these 
+testing screenshots is in testing to ensure that wild encounters will properly catch their targets. The files are split
+into the following:
+ * hatch:
+   * This directory contains 5 examples of the hatching screen for Pokémon hatching including magikarp, onix and both regular
+   and shiny rattata
+ * lakeside:
+   * This is the largest subdirectory of testing screenshots as it is used to maintain the ideal walking path.
+     * The path avoids NPC encounters, grass, buildings and other obstructions. 
+     * To maintain the path the screenshots checks:
+       * If the player starting in the right position
+       * If there is a new egg to be picked up (if hatching eggs)
+         * If the old man NPC is facing left if he has an egg or down if he does not
+   * The naming convention for the screenshots is as follows:
+     * `[false]<lakeside #>.[left].<#>.png`
+       * false is an *optional* parameter, and if there, it's false, otherwise it is true
+       * lakeside is *required* in the name
+       * left is *optional*,if present there is an egg to be picked up
+       * the number is *required*, it corresponds to the time (24hr clock)
+ * wild:
+   * This directory is similar to hatch, but with a few more examples and for wild encounters with Pokémon, not for hatching
+     
 
 
 ### Search Images Directory 
