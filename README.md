@@ -7,7 +7,7 @@ DeSmuME Nintendo DS emulator version 0.9.11. (Untested compatibility with latest
 Pokemon HeartGold or SoulSilver ROM file.  Please acquire these file legally.
 
 ## Running
-Please view the scripts running in these two videos:
+Please view the scripts running in these three videos:
 
 Wild Hunting: https://drive.google.com/file/d/17Mhwu9mQmquz-my4zdbALuYNB0W3rfsC/view?usp=sharing
 
