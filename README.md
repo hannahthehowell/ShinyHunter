@@ -20,6 +20,9 @@ Hatching Full-odds Shiny Eevee: https://www.twitch.tv/roxa_bandita/clip/DrabSpun
 ___
 
 ## Table of Contents
+* Directories
+* Text/csv files
+* Python files
 
 ### Anchor Images Directory
 This directory contains the cropped images (all .png) of buttons or other parts of the emulator that the script either uses to 
@@ -103,4 +106,12 @@ the Pokémon's name.
    * Naming convention:
      * `<Pokedex #>,<Pokémon's name>,`
 
-
+### getSprites.py
+This python module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
+These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
+correct path (currently "/Downloaded"). 
+* The following libraries are required:
+  * requests, shutil, BeautifulSoup imported from bs4 and urllib
+* In the case of successfully running this a message is printed "Image successfully Downloaded" followed by the file
+name and the images are properly saved.
+* In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
