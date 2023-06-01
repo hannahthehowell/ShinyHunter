@@ -127,6 +127,29 @@ the Pokémon's name.
 
 
 ## Python files:
+### main_wild.py
+This module is responsible for hunting Pokémon in the wild. In order to do this the module handles the initial set up for
+the shiny hunting loop by getting three parameters: the Pokémon name dictionary, the enemy dictionary and the up/down or
+left/right decision for the hunt. This user input for the location of the hunt is then used by the ShinyHuntLib module to
+get the screenshots for the possibly hunted Pokémon in that area. This new list of possible Pokémon is then placed into 
+the area list. Using this new area list the user is given options to pick their route for shiny hunting and an option to 
+set the encounter count, if desired. During the running of this module the ROM is reset every ~180 seconds to avoid very
+slow resets. When a Pokémon is found, the emulator is paused and a message (and optional beep sound) is displayed.
+
+### main_egg.py
+This module is very similar to the main_wild.py module, but instead of looking for Pokémon in places like the routes and 
+caves, this module handles shiny hunting by hatching eggs. Once the user inputs the name of the Pokémon that is getting 
+hatched, then the Pokémon dictionary and egg roster can be updated. This allows for the directory of sprite images can 
+be filled with the correct shiny (and its variants) for comparing. Also included in these checks is seeing if the user is
+using, or wants to use a bike or running shoes. Both cannot be used at the same time, screenshots are used to verify the
+users input to ensure continuity of the program. A warning is also displayed letting the user know that any 'extra' Pokémon,
+besides the one required Pokémon in your party (usually with an ability to hatch eggs faster), in their party will be
+permanently lost. 
+
+Several checks are preformed in order to ensure that the path taken by the character is 'safe' from obstacles, NPCs and 
+wild encounters. Checks are also made to see if the player is starting their egg hatching from the right location as well
+as checking to see if there are new eggs to be picked up or non-shiny Pokémon to be discarded. 
+
 ### getSprites.py
 This python module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
 These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
@@ -138,17 +161,6 @@ name and the images are properly saved.
 * In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
 
 ### imageProcessing.py
-
-### main_egg.py
-
-### main_wild.py
-This module is responsible for hunting Pokémon in the wild. In order to do this the module handles the initial set up for
-the shiny hunting loop by getting three parameters: the Pokémon name dictionary, the enemy dictionary and the up/down or
-left/right decision for the hunt. This user input for the location of the hunt is then used by the ShinyHuntLib module to
-get the screenshots for the possibly hunted Pokémon in that area. This new list of possible Pokémon is then placed into 
-the area list. Using this new area list the user is given options to pick their route for shiny hunting and an option to 
-set the encounter count, if desired. During the running of this module the ROM is reset every ~180 seconds to avoid very
-slow resets. When a Pokémon is found, the emulator is paused and a message (and optional beep sound) is displayed.
 
 ### ShinyHuntLib.py
 
