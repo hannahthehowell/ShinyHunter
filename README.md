@@ -182,3 +182,7 @@ createAndFillSearchFolder which takes the huntingNumbers and produces a folder w
 cropImgGray function which removes excess whitespace and returns the cropped image. 
 
 ### unit_tests.py
+This module contains unit tests to ensure that several of the program's key features are working. These tests include 
+checking that the Wild Lists are working properly, that wild shinies are found (or non-shinies are skipped), that a shiny 
+that hatches from an egg is caught (or non-shiny skipped) or that the player is in fact by the Lakeside in the correct 
+position to be able to start using the shiny hunting with eggs. 
