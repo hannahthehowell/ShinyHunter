@@ -32,6 +32,12 @@ ___
   * [PokemonListByNumber.csv](#pokemonlistbynumbercsv)
 * [Python files:](#python-files)
   * [getSprites.py](#getspritespy)
+  * [imageProcessing.py](#imageprocessingpy)
+  * [main_egg.py](#main_eggpy)
+  * [main_wild.py](#main_wildpy)
+  * [ShinyHuntLib.py](#shinyhuntlibpy)
+  * [uploadImages.py](#uploadimagespy)
+  * [unit_tests.py](#unit_testspy)
 
 
 ## Directories:
@@ -130,3 +136,15 @@ correct path (currently "/Downloaded").
 * In the case of successfully running this a message is printed "Image successfully Downloaded" followed by the file
 name and the images are properly saved.
 * In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
+
+### imageProcessing.py
+
+### main_egg.py
+
+### main_wild.py
+
+### ShinyHuntLib.py
+
+### uploadImages.py
+
+### unit_tests.py
