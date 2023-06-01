@@ -142,6 +142,13 @@ name and the images are properly saved.
 ### main_egg.py
 
 ### main_wild.py
+This module is responsible for hunting Pokémon in the wild. In order to do this the module handles the initial set up for
+the shiny hunting loop by getting three parameters: the Pokémon name dictionary, the enemy dictionary and the up/down or
+left/right decision for the hunt. This user input for the location of the hunt is then used by the ShinyHuntLib module to
+get the screenshots for the possibly hunted Pokémon in that area. This new list of possible Pokémon is then placed into 
+the area list. Using this new area list the user is given options to pick their route for shiny hunting and an option to 
+set the encounter count, if desired. During the running of this module the ROM is reset every ~180 seconds to avoid very
+slow resets. When a Pokémon is found, the emulator is paused and a message (and optional beep sound) is displayed.
 
 ### ShinyHuntLib.py
 
