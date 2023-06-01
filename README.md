@@ -175,5 +175,10 @@ or removing screenshots, a sequence that gets played when a shiny is found and a
 ROM occasionally (every ~180 seconds) is important to ensure that it does not slow down or freeze up. 
 
 ### uploadImages.py
+This module uses several of the other modules and files to load up the lists and dictionaries for the given Pokémon. For 
+instance the loadList function is used to list all the possible Pokémon at that location that can be found. Other functions, 
+like listToNumbers, is used to convert a Pokémon's name to it's Pokedex number. Two of the other key functions include the
+createAndFillSearchFolder which takes the huntingNumbers and produces a folder with the needed search images or the 
+cropImgGray function which removes excess whitespace and returns the cropped image. 
 
 ### unit_tests.py
