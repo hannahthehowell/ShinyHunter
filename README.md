@@ -127,20 +127,6 @@ the Pokémon's name.
 
 
 ## Python files:
-### getSprites.py
-This python module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
-These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
-correct path (currently "/Downloaded"). 
-* The following libraries are required:
-  * requests, shutil, BeautifulSoup imported from bs4 and urllib
-* In the case of successfully running this a message is printed "Image successfully Downloaded" followed by the file
-name and the images are properly saved.
-* In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
-
-### imageProcessing.py
-
-### main_egg.py
-
 ### main_wild.py
 This module is responsible for hunting Pokémon in the wild. In order to do this the module handles the initial set up for
 the shiny hunting loop by getting three parameters: the Pokémon name dictionary, the enemy dictionary and the up/down or
@@ -150,8 +136,53 @@ the area list. Using this new area list the user is given options to pick their 
 set the encounter count, if desired. During the running of this module the ROM is reset every ~180 seconds to avoid very
 slow resets. When a Pokémon is found, the emulator is paused and a message (and optional beep sound) is displayed.
 
+### main_egg.py
+This module is very similar to the main_wild.py module, but instead of looking for Pokémon in places like the routes and 
+caves, this module handles shiny hunting by hatching eggs. Once the user inputs the name of the Pokémon that is getting 
+hatched, then the Pokémon dictionary and egg roster can be updated. This allows for the directory of sprite images can 
+be filled with the correct shiny (and its variants) for comparing. Also included in these checks is seeing if the user is
+using, or wants to use a bike or running shoes. Both cannot be used at the same time, screenshots are used to verify the
+users input to ensure continuity of the program. A warning is also displayed letting the user know that any 'extra' Pokémon,
+besides the one required Pokémon in your party (usually with an ability to hatch eggs faster), in their party will be
+permanently lost. 
+
+Several checks are preformed in order to ensure that the path taken by the character is 'safe' from obstacles, NPCs and 
+wild encounters. Checks are also made to see if the player is starting their egg hatching from the right location as well
+as checking to see if there are new eggs to be picked up or non-shiny Pokémon to be discarded. 
+
+### getSprites.py
+This module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
+These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
+correct path (currently "/Downloaded"). 
+* The following libraries are required:
+  * requests, shutil, BeautifulSoup imported from bs4 and urllib
+* In the case of successfully running this a message is printed "Image successfully Downloaded" followed by the file
+name and the images are properly saved.
+* In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
+
+### imageProcessing.py
+This module contains several functions that are used to check images in the form of either screenshots from the emulator, 
+testing screenshots or the sprite images. Some of these functions include identifying the enemy's Pokémon or identifying
+the Pokémon that just hatched. Other functions include checking to see which direction the man is facing by the river 
+(which tells indicates if there is an egg ready to be picked up or not) or checking if the player is in the right 
+location by the Lakeside. More functions included are checking if the Pokémon is shiny and removing the background's color
+from hatched eggs' screenshots to make them easier to compare. 
+
 ### ShinyHuntLib.py
+This module handles several of the necessary functions for the Desmume emulator and it's uses. These functions include 
+checking that the emulator is up and running, that an image was found, clicking on a specific image on the screen, taking 
+or removing screenshots, a sequence that gets played when a shiny is found and a function to reset the ROM. Resetting the 
+ROM occasionally (every ~180 seconds) is important to ensure that it does not slow down or freeze up. 
 
 ### uploadImages.py
+This module uses several of the other modules and files to load up the lists and dictionaries for the given Pokémon. For 
+instance the loadList function is used to list all the possible Pokémon at that location that can be found. Other functions, 
+like listToNumbers, is used to convert a Pokémon's name to it's Pokedex number. Two of the other key functions include the
+createAndFillSearchFolder which takes the huntingNumbers and produces a folder with the needed search images or the 
+cropImgGray function which removes excess whitespace and returns the cropped image. 
 
 ### unit_tests.py
+This module contains unit tests to ensure that several of the program's key features are working. These tests include 
+checking that the Wild Lists are working properly, that wild shinies are found (or non-shinies are skipped), that a shiny 
+that hatches from an egg is caught (or non-shiny skipped) or that the player is in fact by the Lakeside in the correct 
+position to be able to start using the shiny hunting with eggs. 
