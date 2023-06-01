@@ -20,19 +20,21 @@ Hatching Full-odds Shiny Eevee: https://www.twitch.tv/roxa_bandita/clip/DrabSpun
 ___
 
 ## Table of Contents
-* Directories:
-  * Anchor Images [link](#anchor-images-directory)
-  * HGSS_AllSprites
-  * TestingScreenshots
-  * Search Images
-  * WildPokemonLists
-* Text files:
-  * EggRoster.txt
-* CSV files:
-  * PokemonListByNumber.csv
-* Python files:
-  * getSprites.py
+* [Directories:](#directories)
+  * [Anchor Images](#anchor-images-directory)
+  * [HGSS_AllSprites](#hgss_allsprites-directory)
+  * [TestingScreenshots](#testingscreenshots-directory)
+  * [Search Images](#search-images-directory )
+  * [WildPokemonLists](#wildpokemonlists-directory)
+* [Text files:](#text-files)
+  * [EggRoster.txt](#eggrostertxt)
+* [CSV files:](#csv-files)
+  * [PokemonListByNumber.csv](#pokemonlistbynumbercsv)
+* [Python files:](#python-files)
+  * [getSprites.py](#getspritespy)
 
+
+## Directories:
 ### Anchor Images Directory
 This directory contains the cropped images (all .png) of buttons or other parts of the emulator that the script either uses to 
 verify that it is the correct screen, or to click in cases like the 'Run' or 'Next' buttons. 
@@ -75,8 +77,6 @@ into the following:
        * the number is *required*, it corresponds to the time (24hr clock)
  * wild:
    * This directory is similar to hatch, but with a few more examples and for wild encounters with Pokémon, not for hatching
-     
-
 
 ### Search Images Directory 
 This directory is created and populated at runtime, so it won't initially be in the source folder upon set up. 
@@ -104,10 +104,14 @@ next location has its own line.
      * "Route 29, Pidgey, Sentret, Rattata, Hoothoot"
      * "Dark Cave, Magikarp"
 
+
+## Text files:
 ### EggRoster.txt
 This text file has a list of each possible Pokémon that can be hatched in the game.
    * The text file is set up with each Pokémon listed on its own individual line 
 
+
+## CSV files:
 ### PokemonListByNumber.csv
 This csv file is similar to the EggRoster.txt file, but instead it lists the Pokedex number, a comma, and then 
 the Pokémon's name. 
@@ -115,6 +119,8 @@ the Pokémon's name.
    * Naming convention:
      * `<Pokedex #>,<Pokémon's name>,`
 
+
+## Python files:
 ### getSprites.py
 This python module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
 These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
