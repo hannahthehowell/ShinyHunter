@@ -40,7 +40,7 @@ This directory contains the cropped images (all .png) of buttons or other parts 
 verify that it is the correct screen, or to click in cases like the 'Run' or 'Next' buttons. 
    * This is also used for finding the buttons needed for options like using the bike or running shoes.
    * Here is an example of the 'ShoesOn' anchor image:
-   ![Shoes On image](/AnchorImages/ShoesOn.png "ShoesOn")
+   ![Shoes On image](/AnchorImages/ShoesOn.PNG "ShoesOn")
 
 ### HGSS_AllSprites Directory
 This directory contains the cropped images of each possible Pokémon sprite, and their variants. These variations can 
