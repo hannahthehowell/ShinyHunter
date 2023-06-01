@@ -20,9 +20,18 @@ Hatching Full-odds Shiny Eevee: https://www.twitch.tv/roxa_bandita/clip/DrabSpun
 ___
 
 ## Table of Contents
-* Directories
-* Text/csv files
-* Python files
+* Directories:
+  * Anchor Images [link](#anchor-images-directory)
+  * HGSS_AllSprites
+  * TestingScreenshots
+  * Search Images
+  * WildPokemonLists
+* Text files:
+  * EggRoster.txt
+* CSV files:
+  * PokemonListByNumber.csv
+* Python files:
+  * getSprites.py
 
 ### Anchor Images Directory
 This directory contains the cropped images (all .png) of buttons or other parts of the emulator that the script either uses to 
