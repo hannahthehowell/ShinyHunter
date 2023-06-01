@@ -151,7 +151,7 @@ wild encounters. Checks are also made to see if the player is starting their egg
 as checking to see if there are new eggs to be picked up or non-shiny Pokémon to be discarded. 
 
 ### getSprites.py
-This python module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
+This module uses several libraries to download all the needed sprite images from [pokencyclopedia](https://pokencyclopedia.info/). 
 These sprites images are cropped, saved using their  unique id numbers (using information from the url) and placed in the 
 correct path (currently "/Downloaded"). 
 * The following libraries are required:
@@ -161,6 +161,12 @@ name and the images are properly saved.
 * In the case of getting this error "Image Couldn't be retrieved" there was an issue with getting the image
 
 ### imageProcessing.py
+This module contains several functions that are used to check images in the form of either screenshots from the emulator, 
+testing screenshots or the sprite images. Some of these functions include identifying the enemy's Pokémon or identifying
+the Pokémon that just hatched. Other functions include checking to see which direction the man is facing by the river 
+(which tells indicates if there is an egg ready to be picked up or not) or checking if the player is in the right 
+location by the Lakeside. More functions included are checking if the Pokémon is shiny and removing the background's color
+from hatched eggs' screenshots to make them easier to compare. 
 
 ### ShinyHuntLib.py
 
