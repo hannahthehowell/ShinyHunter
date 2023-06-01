@@ -169,6 +169,10 @@ location by the Lakeside. More functions included are checking if the Pokémon i
 from hatched eggs' screenshots to make them easier to compare. 
 
 ### ShinyHuntLib.py
+This module handles several of the necessary functions for the Desmume emulator and it's uses. These functions include 
+checking that the emulator is up and running, that an image was found, clicking on a specific image on the screen, taking 
+or removing screenshots, a sequence that gets played when a shiny is found and a function to reset the ROM. Resetting the 
+ROM occasionally (every ~180 seconds) is important to ensure that it does not slow down or freeze up. 
 
 ### uploadImages.py
 
